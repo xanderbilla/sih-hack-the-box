@@ -1,17 +1,42 @@
+"use client";
+
 import { GalleryVerticalEnd } from "lucide-react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRegister } from "@/hooks/useAuth";
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [formData, setFormData] = useState({
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const registerMutation = useRegister();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    registerMutation.mutate(formData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <a
@@ -38,6 +63,8 @@ export function RegisterForm({
                 id="name"
                 type="text"
                 placeholder="Enter your Name"
+                value={formData.name}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -47,6 +74,8 @@ export function RegisterForm({
                 id="username"
                 type="text"
                 placeholder="username"
+                value={formData.username}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -56,6 +85,8 @@ export function RegisterForm({
                 id="email"
                 type="email"
                 placeholder="m@example.com"
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -65,11 +96,17 @@ export function RegisterForm({
                 id="password"
                 type="password"
                 placeholder="Enter Password"
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
-              Register
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={registerMutation.isPending}
+            >
+              {registerMutation.isPending ? "Registering..." : "Register"}
             </Button>
           </div>
         </div>

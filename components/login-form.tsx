@@ -1,17 +1,40 @@
+"use client";
+
 import { GalleryVerticalEnd } from "lucide-react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLogin } from "@/hooks/useAuth";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const loginMutation = useLogin();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate(formData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <a
@@ -38,6 +61,8 @@ export function LoginForm({
                 id="email"
                 type="email"
                 placeholder="m@example.com"
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -47,11 +72,17 @@ export function LoginForm({
                 id="password"
                 type="password"
                 placeholder="Enter Password"
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? "Logging in..." : "Login"}
             </Button>
           </div>
         </div>
