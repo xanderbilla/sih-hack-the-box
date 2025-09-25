@@ -23,10 +23,17 @@ export interface AuthResponse {
 }
 
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   username: string;
-  name: string;
-  createdAt?: string;
-  updatedAt?: string;
+  Name: string;
+  avatarUrl: string;
+  verified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface UserProfileResponse {
+  user: User;
 }

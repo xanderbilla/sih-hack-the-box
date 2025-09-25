@@ -13,10 +13,15 @@ export const httpService = {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `HTTP error! status: ${response.status}, response: ${errorText}`
+      );
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
@@ -29,12 +34,17 @@ export const httpService = {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error(
+        `HTTP error! status: ${response.status}, response:`,
+        errorData
+      );
       throw new Error(
         errorData.message || `HTTP error! status: ${response.status}`
       );
@@ -49,4 +59,5 @@ export const apiEndpoints = {
   health: "/health",
   login: "/api/v1/auth/login",
   register: "/api/v1/auth/register",
+  userProfile: "/api/v1/user/profile",
 };
